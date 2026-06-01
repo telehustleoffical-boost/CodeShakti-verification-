@@ -1,125 +1,297 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Code Shakti Wallet</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>PayQuest Wallet</title>
+
+<!-- GOOGLE FONTS -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+<!-- FONT AWESOME -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
 <style>
-body {
-    margin: 0;
-    font-family: Arial;
-    background: #0b0f1a;
-    color: white;
+:root{
+--primary:#4318FF;
+--secondary:#007BFF;
+--accent:#8B5CF6;
+--success:#00C853;
+--danger:#FF3B30;
+--bg:#0F172A;
+--card:rgba(255,255,255,0.08);
 }
 
-.header {
-    text-align: center;
-    padding: 20px;
-    color: #00e5ff;
-    font-size: 22px;
-    font-weight: bold;
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter;}
+body{background:var(--bg);color:#fff;overflow-x:hidden;}
+
+h1,h2,h3{font-family:Poppins;}
+
+.hidden{display:none;}
+
+.header{
+position:sticky;top:0;
+background:rgba(15,23,42,0.9);
+backdrop-filter:blur(10px);
+padding:15px;
+text-align:center;
+font-weight:600;
+z-index:10;
 }
 
-.rotate {
-    position: fixed;
-    top: 15px;
-    right: 15px;
-    font-size: 28px;
-    animation: spin 3s linear infinite;
-    color: #00e5ff;
+.card{
+background:var(--card);
+margin:12px;
+padding:15px;
+border-radius:24px;
+backdrop-filter:blur(12px);
+box-shadow:0 0 20px rgba(0,0,0,0.3);
+animation:fade .4s ease;
 }
 
-@keyframes spin {
-    100% { transform: rotate(360deg); }
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1}}
+
+.balance{
+font-size:28px;
+font-weight:700;
+color:var(--primary);
 }
 
-.card {
-    margin: 10px;
-    padding: 12px;
-    background: #151f35;
-    border-radius: 10px;
-    display: flex;
-    justify-content: space-between;
-    border-left: 4px solid #00e5ff;
+.btn{
+padding:10px 14px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+color:#fff;
+background:linear-gradient(135deg,var(--primary),var(--accent));
 }
 
-.userbox {
-    margin: 15px;
-    padding: 15px;
-    background: #121a2b;
-    border-radius: 10px;
+.nav{
+position:fixed;
+bottom:0;
+width:100%;
+height:82px;
+display:flex;
+justify-content:space-around;
+align-items:center;
+background:rgba(0,0,0,0.6);
+backdrop-filter:blur(10px);
 }
+
+.nav i{font-size:18px}
+
+.center-btn{
+width:55px;height:55px;
+border-radius:50%;
+background:linear-gradient(135deg,var(--primary),var(--accent));
+display:flex;align-items:center;justify-content:center;
+margin-top:-25px;
+box-shadow:0 0 20px var(--primary);
+}
+
+.toast{
+position:fixed;top:20px;right:20px;
+background:#111;
+padding:10px 15px;
+border-radius:10px;
+display:none;
+}
+
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+
+.small{font-size:13px;opacity:.8}
 </style>
 </head>
 
 <body>
 
-<div class="rotate">𖣘</div>
+<div class="header">💎 PayQuest Wallet</div>
 
-<div class="header">💎 CODE SHAKTI WALLET</div>
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
 
-<div class="userbox" id="userBox">Loading user...</div>
+<!-- HOME -->
+<div id="home" class="view">
+<div class="card">
+<h2>Welcome 👋</h2>
+<p class="small">Premium Fintech Wallet System</p>
+</div>
 
-<h3 style="text-align:center;">🏆 LIVE LEADERBOARD</h3>
-<div id="board"></div>
+<div class="card">
+<h3>Balance</h3>
+<div class="balance">₹<span id="bal">0</span></div>
+</div>
 
-<script>
-const tg = window.Telegram.WebApp;
-tg.expand();
+<div class="card grid">
+<button class="btn">Task Earn</button>
+<button class="btn">Refer Earn</button>
+<button class="btn">Withdraw</button>
+<button class="btn">Wallet</button>
+</div>
+</div>
 
-const API = "http://localhost:3000";
+<!-- TASK -->
+<div id="tasks" class="view hidden">
+<div class="card">
+<h3>📋 Tasks</h3>
+<p class="small">Complete tasks & earn rewards</p>
+</div>
+<div id="taskList"></div>
+</div>
 
-// ================== LOGIN ==================
-async function login() {
-    let res = await fetch(`${API}/auth`, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-            initData: tg.initData,
-            botToken: "YOUR_BOT_TOKEN"
-        })
-    });
+<!-- WALLET -->
+<div id="wallet" class="view hidden">
+<div class="card">
+<h3>💰 Wallet</h3>
+<p>Balance: ₹<span id="bal2">0</span></p>
+</div>
 
-    let data = await res.json();
+<div class="card">
+<input id="upi" placeholder="Enter UPI" style="width:100%;padding:10px;border-radius:10px;border:none"/>
+<br><br>
+<button class="btn" onclick="setUPI()">Save UPI</button>
+</div>
+</div>
 
-    if (data.ok) {
-        window.user = data.user;
+<!-- WITHDRAW -->
+<div id="withdraw" class="view hidden">
+<div class="card">
+<h3>💸 Withdraw</h3>
+<input id="amt" placeholder="Enter Amount" style="width:100%;padding:10px;border-radius:10px;border:none"/>
+<br><br>
+<button class="btn" onclick="withdraw()">Request</button>
+</div>
+</div>
 
-        document.getElementById("userBox").innerHTML = `
-            👤 Name: <b>${data.user.name}</b><br>
-            💰 Balance: ₹${data.user.balance}
-        `;
-    } else {
-        document.getElementById("userBox").innerHTML = "❌ Auth Failed";
-    }
+<!-- SETTINGS -->
+<div id="settings" class="view hidden">
+<div class="card">
+<h3>⚙️ Settings</h3>
+<button class="btn" onclick="logout()">Logout</button>
+</div>
+</div>
+
+<!-- ADMIN -->
+<div id="admin" class="view hidden">
+<div class="card">
+<h3>👑 Admin Panel</h3>
+<p class="small">Only Admin Access</p>
+</div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+<i onclick="show('home')" class="fa fa-home"></i>
+<i onclick="show('tasks')" class="fa fa-list"></i>
+
+<div class="center-btn" onclick="show('wallet')">
+<i class="fa fa-wallet"></i>
+</div>
+
+<i onclick="show('withdraw')" class="fa fa-money-bill"></i>
+<i onclick="show('settings')" class="fa fa-gear"></i>
+</div>
+
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getDatabase, ref, set, get, update, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+/* ================= FIREBASE CONFIG ================= */
+const firebaseConfig = {
+  apiKey: "YOUR_KEY",
+  authDomain: "YOUR_DOMAIN",
+  databaseURL: "YOUR_DB",
+  projectId: "YOUR_ID",
+  appId: "YOUR_APP"
+};
+
+let mockMode = firebaseConfig.apiKey === "YOUR_KEY";
+
+/* INIT */
+const app = !mockMode ? initializeApp(firebaseConfig) : null;
+const auth = !mockMode ? getAuth(app) : null;
+const db = !mockMode ? getDatabase(app) : null;
+
+/* MOCK DATA */
+let user = {
+  uid:"123",
+  name:"Piyush",
+  balance:1200,
+  upi:""
+};
+
+let tasks = [
+{title:"Join Channel @PayQuest", reward:10},
+{title:"Watch Ad", reward:5}
+];
+
+/* TOAST */
+function toast(msg){
+let t=document.getElementById("toast");
+t.innerText=msg;
+t.style.display="block";
+setTimeout(()=>t.style.display="none",2000);
 }
 
-// ================== LEADERBOARD ==================
-async function loadBoard() {
-    let res = await fetch(`${API}/leaderboard`);
-    let data = await res.json();
-
-    let html = "";
-
-    data.forEach((u, i) => {
-        html += `
-        <div class="card">
-            <span>${i==0?"🥇":i==1?"🥈":i==2?"🥉":"🔥"} ${u.name}</span>
-            <span>₹${u.balance}</span>
-        </div>
-        `;
-    });
-
-    document.getElementById("board").innerHTML = html;
+/* NAV */
+window.show=function(id){
+document.querySelectorAll(".view").forEach(v=>v.classList.add("hidden"));
+document.getElementById(id).classList.remove("hidden");
 }
 
-// LIVE REFRESH
-setInterval(loadBoard, 3000);
+/* LOAD USER */
+function load(){
+document.getElementById("bal").innerText=user.balance;
+document.getElementById("bal2").innerText=user.balance;
+}
 
-login();
-loadBoard();
+/* TASKS */
+function loadTasks(){
+let box=document.getElementById("taskList");
+box.innerHTML="";
+tasks.forEach((t,i)=>{
+box.innerHTML+=`
+<div class="card">
+<h4>${t.title}</h4>
+<p>Reward: ₹${t.reward}</p>
+<button class="btn" onclick="completeTask(${i})">Complete</button>
+</div>`;
+});
+}
+
+window.completeTask=function(i){
+user.balance+=tasks[i].reward;
+toast("Reward Added!");
+load();
+}
+
+/* UPI */
+window.setUPI=function(){
+user.upi=document.getElementById("upi").value;
+toast("UPI Saved");
+}
+
+/* WITHDRAW */
+window.withdraw=function(){
+let amt=document.getElementById("amt").value;
+if(amt>user.balance){toast("Insufficient Balance");return;}
+user.balance-=amt;
+toast("Withdraw Requested");
+load();
+}
+
+/* AUTH MOCK */
+function init(){
+load();
+loadTasks();
+toast("Welcome to PayQuest");
+}
+
+init();
+
 </script>
-
 </body>
 </html>
