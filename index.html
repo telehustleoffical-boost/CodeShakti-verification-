@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <title>Code Shakti Wallet</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
 body {
@@ -12,56 +13,42 @@ body {
     color: white;
 }
 
-/* TOP HEADER */
 .header {
-    padding: 20px;
     text-align: center;
+    padding: 20px;
+    color: #00e5ff;
     font-size: 22px;
     font-weight: bold;
+}
+
+.rotate {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    font-size: 28px;
+    animation: spin 3s linear infinite;
     color: #00e5ff;
 }
 
-/* USER CARD */
-.user-card {
-    margin: 15px;
-    padding: 15px;
-    background: #121a2b;
-    border-radius: 12px;
-    box-shadow: 0 0 10px #00e5ff44;
-}
-
-/* LEADERBOARD */
-.board {
-    margin: 15px;
+@keyframes spin {
+    100% { transform: rotate(360deg); }
 }
 
 .card {
-    background: #151f35;
-    margin: 10px 0;
+    margin: 10px;
     padding: 12px;
+    background: #151f35;
     border-radius: 10px;
     display: flex;
     justify-content: space-between;
     border-left: 4px solid #00e5ff;
 }
 
-/* ROTATING ICON */
-.rotate {
-    position: fixed;
-    top: 15px;
-    right: 15px;
-    font-size: 28px;
-    color: #00e5ff;
-    animation: spin 3s linear infinite;
-}
-
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-.badge {
-    color: gold;
+.userbox {
+    margin: 15px;
+    padding: 15px;
+    background: #121a2b;
+    border-radius: 10px;
 }
 </style>
 </head>
@@ -70,40 +57,69 @@ body {
 
 <div class="rotate">𖣘</div>
 
-<div class="header">
-💎 CODE SHAKTI WALLET
-</div>
+<div class="header">💎 CODE SHAKTI WALLET</div>
 
-<div class="user-card">
-👤 Name: <b>Piyush Kumar</b><br>
-💰 Balance: <b>₹1,250</b><br>
-🏆 Rank: <span class="badge">Gold User</span>
-</div>
+<div class="userbox" id="userBox">Loading user...</div>
 
-<div class="board">
-<h3 style="text-align:center;">🏆 Top Balance Holders</h3>
+<h3 style="text-align:center;">🏆 LIVE LEADERBOARD</h3>
+<div id="board"></div>
 
-<div class="card">
-<span>🥇 Rahul</span>
-<span>₹5,450</span>
-</div>
+<script>
+const tg = window.Telegram.WebApp;
+tg.expand();
 
-<div class="card">
-<span>🥈 Aman</span>
-<span>₹3,200</span>
-</div>
+const API = "http://localhost:3000";
 
-<div class="card">
-<span>🥉 Piyush</span>
-<span>₹1,250</span>
-</div>
+// ================== LOGIN ==================
+async function login() {
+    let res = await fetch(`${API}/auth`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            initData: tg.initData,
+            botToken: "YOUR_BOT_TOKEN"
+        })
+    });
 
-<div class="card">
-<span>🔥 Neha</span>
-<span>₹980</span>
-</div>
+    let data = await res.json();
 
-</div>
+    if (data.ok) {
+        window.user = data.user;
+
+        document.getElementById("userBox").innerHTML = `
+            👤 Name: <b>${data.user.name}</b><br>
+            💰 Balance: ₹${data.user.balance}
+        `;
+    } else {
+        document.getElementById("userBox").innerHTML = "❌ Auth Failed";
+    }
+}
+
+// ================== LEADERBOARD ==================
+async function loadBoard() {
+    let res = await fetch(`${API}/leaderboard`);
+    let data = await res.json();
+
+    let html = "";
+
+    data.forEach((u, i) => {
+        html += `
+        <div class="card">
+            <span>${i==0?"🥇":i==1?"🥈":i==2?"🥉":"🔥"} ${u.name}</span>
+            <span>₹${u.balance}</span>
+        </div>
+        `;
+    });
+
+    document.getElementById("board").innerHTML = html;
+}
+
+// LIVE REFRESH
+setInterval(loadBoard, 3000);
+
+login();
+loadBoard();
+</script>
 
 </body>
 </html>
