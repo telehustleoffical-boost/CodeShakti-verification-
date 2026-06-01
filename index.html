@@ -1,1 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Code Shakti Wallet</title>
 
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #0b0f1a;
+    color: white;
+}
+
+/* TOP HEADER */
+.header {
+    padding: 20px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    color: #00e5ff;
+}
+
+/* USER CARD */
+.user-card {
+    margin: 15px;
+    padding: 15px;
+    background: #121a2b;
+    border-radius: 12px;
+    box-shadow: 0 0 10px #00e5ff44;
+}
+
+/* LEADERBOARD */
+.board {
+    margin: 15px;
+}
+
+.card {
+    background: #151f35;
+    margin: 10px 0;
+    padding: 12px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    border-left: 4px solid #00e5ff;
+}
+
+/* ROTATING ICON */
+.rotate {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    font-size: 28px;
+    color: #00e5ff;
+    animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.badge {
+    color: gold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="rotate">𖣘</div>
+
+<div class="header">
+💎 CODE SHAKTI WALLET
+</div>
+
+<div class="user-card">
+👤 Name: <b>Piyush Kumar</b><br>
+💰 Balance: <b>₹1,250</b><br>
+🏆 Rank: <span class="badge">Gold User</span>
+</div>
+
+<div class="board">
+<h3 style="text-align:center;">🏆 Top Balance Holders</h3>
+
+<div class="card">
+<span>🥇 Rahul</span>
+<span>₹5,450</span>
+</div>
+
+<div class="card">
+<span>🥈 Aman</span>
+<span>₹3,200</span>
+</div>
+
+<div class="card">
+<span>🥉 Piyush</span>
+<span>₹1,250</span>
+</div>
+
+<div class="card">
+<span>🔥 Neha</span>
+<span>₹980</span>
+</div>
+
+</div>
+
+</body>
+</html>
