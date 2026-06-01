@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-<title>PayQuest Wallet</title>
+<title>Javagoat</title>
 
-<!-- GOOGLE FONTS -->
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<!-- FONTS -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
 
 <!-- FONT AWESOME -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
@@ -17,54 +17,62 @@
 --primary:#4318FF;
 --secondary:#007BFF;
 --accent:#8B5CF6;
---success:#00C853;
---danger:#FF3B30;
---bg:#0F172A;
---card:rgba(255,255,255,0.08);
+--bg:#f6f8ff;
+--card:#ffffff;
 }
 
 *{margin:0;padding:0;box-sizing:border-box;font-family:Inter;}
-body{background:var(--bg);color:#fff;overflow-x:hidden;}
+
+body{background:var(--bg);color:#111;overflow-x:hidden;}
 
 h1,h2,h3{font-family:Poppins;}
 
 .hidden{display:none;}
 
-.header{
+.topbar{
 position:sticky;top:0;
-background:rgba(15,23,42,0.9);
-backdrop-filter:blur(10px);
+background:rgba(255,255,255,0.7);
+backdrop-filter:blur(12px);
 padding:15px;
-text-align:center;
-font-weight:600;
+display:flex;
+justify-content:space-between;
+align-items:center;
 z-index:10;
+box-shadow:0 2px 10px rgba(0,0,0,0.05);
+}
+
+.cart-badge{
+background:red;color:#fff;
+padding:2px 6px;
+border-radius:50%;
+font-size:10px;
+margin-left:5px;
 }
 
 .card{
 background:var(--card);
-margin:12px;
+margin:10px;
 padding:15px;
-border-radius:24px;
-backdrop-filter:blur(12px);
-box-shadow:0 0 20px rgba(0,0,0,0.3);
-animation:fade .4s ease;
+border-radius:18px;
+box-shadow:0 2px 10px rgba(0,0,0,0.06);
+animation:fade .3s ease;
 }
 
 @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1}}
 
-.balance{
-font-size:28px;
-font-weight:700;
-color:var(--primary);
+.grid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
+padding:10px;
 }
 
 .btn{
-padding:10px 14px;
+padding:10px 12px;
 border:none;
 border-radius:12px;
-cursor:pointer;
 color:#fff;
-background:linear-gradient(135deg,var(--primary),var(--accent));
+background:var(--primary);
 }
 
 .nav{
@@ -75,161 +83,156 @@ height:82px;
 display:flex;
 justify-content:space-around;
 align-items:center;
-background:rgba(0,0,0,0.6);
+background:rgba(255,255,255,0.8);
 backdrop-filter:blur(10px);
 }
 
-.nav i{font-size:18px}
-
-.center-btn{
+.center{
 width:55px;height:55px;
 border-radius:50%;
-background:linear-gradient(135deg,var(--primary),var(--accent));
+background:var(--primary);
 display:flex;align-items:center;justify-content:center;
-margin-top:-25px;
-box-shadow:0 0 20px var(--primary);
+color:#fff;
+margin-top:-20px;
 }
+
+.red{border-left:5px solid #ff4d4d;}
+.yellow{border-left:5px solid #ffb300;}
+.green{border-left:5px solid #00c853;}
 
 .toast{
 position:fixed;top:20px;right:20px;
-background:#111;
-padding:10px 15px;
+background:#111;color:#fff;
+padding:10px 14px;
 border-radius:10px;
 display:none;
 }
-
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
-
-.small{font-size:13px;opacity:.8}
 </style>
 </head>
 
 <body>
 
-<div class="header">💎 PayQuest Wallet</div>
+<div class="topbar">
+<h3>📘 Javagoat</h3>
+<div>
+<i class="fa fa-shopping-cart"></i>
+<span class="cart-badge" id="cartCount">0</span>
+</div>
+</div>
 
-<!-- TOAST -->
 <div id="toast" class="toast"></div>
 
 <!-- HOME -->
 <div id="home" class="view">
 <div class="card">
-<h2>Welcome 👋</h2>
-<p class="small">Premium Fintech Wallet System</p>
+<h2>Welcome to Javagoat 🚀</h2>
+<p>Learn • Test • Grow</p>
 </div>
 
-<div class="card">
-<h3>Balance</h3>
-<div class="balance">₹<span id="bal">0</span></div>
+<div class="grid">
+
+<div class="card red" onclick="show('courses')">
+<h3>Courses</h3>
 </div>
 
-<div class="card grid">
-<button class="btn">Task Earn</button>
-<button class="btn">Refer Earn</button>
-<button class="btn">Withdraw</button>
-<button class="btn">Wallet</button>
-</div>
+<div class="card yellow" onclick="show('tests')">
+<h3>Tests</h3>
 </div>
 
-<!-- TASK -->
-<div id="tasks" class="view hidden">
-<div class="card">
-<h3>📋 Tasks</h3>
-<p class="small">Complete tasks & earn rewards</p>
-</div>
-<div id="taskList"></div>
+<div class="card green" onclick="show('lectures')">
+<h3>Lectures</h3>
 </div>
 
-<!-- WALLET -->
-<div id="wallet" class="view hidden">
-<div class="card">
-<h3>💰 Wallet</h3>
-<p>Balance: ₹<span id="bal2">0</span></p>
-</div>
-
-<div class="card">
-<input id="upi" placeholder="Enter UPI" style="width:100%;padding:10px;border-radius:10px;border:none"/>
-<br><br>
-<button class="btn" onclick="setUPI()">Save UPI</button>
 </div>
 </div>
 
-<!-- WITHDRAW -->
-<div id="withdraw" class="view hidden">
-<div class="card">
-<h3>💸 Withdraw</h3>
-<input id="amt" placeholder="Enter Amount" style="width:100%;padding:10px;border-radius:10px;border:none"/>
-<br><br>
-<button class="btn" onclick="withdraw()">Request</button>
-</div>
+<!-- COURSES -->
+<div id="courses" class="view hidden">
+<div id="courseList"></div>
 </div>
 
-<!-- SETTINGS -->
-<div id="settings" class="view hidden">
-<div class="card">
-<h3>⚙️ Settings</h3>
-<button class="btn" onclick="logout()">Logout</button>
+<!-- TESTS -->
+<div id="tests" class="view hidden">
+<div id="testList"></div>
 </div>
+
+<!-- LECTURES -->
+<div id="lectures" class="view hidden">
+<div id="lectureList"></div>
+</div>
+
+<!-- LIBRARY -->
+<div id="library" class="view hidden">
+<div class="card"><h3>📚 Library</h3></div>
+<div id="lib"></div>
+</div>
+
+<!-- CART -->
+<div id="cart" class="view hidden">
+<div class="card"><h3>🛒 Cart</h3></div>
+<div id="cartList"></div>
+<button class="btn" onclick="checkout()">Checkout</button>
 </div>
 
 <!-- ADMIN -->
 <div id="admin" class="view hidden">
 <div class="card">
 <h3>👑 Admin Panel</h3>
-<p class="small">Only Admin Access</p>
+<p>Add / Manage Content</p>
 </div>
 </div>
 
 <!-- NAV -->
 <div class="nav">
 <i onclick="show('home')" class="fa fa-home"></i>
-<i onclick="show('tasks')" class="fa fa-list"></i>
+<i onclick="show('library')" class="fa fa-book"></i>
 
-<div class="center-btn" onclick="show('wallet')">
-<i class="fa fa-wallet"></i>
+<div class="center" onclick="show('cart')">
+<i class="fa fa-cart-shopping"></i>
 </div>
 
-<i onclick="show('withdraw')" class="fa fa-money-bill"></i>
-<i onclick="show('settings')" class="fa fa-gear"></i>
+<i onclick="show('tests')" class="fa fa-file"></i>
+<i onclick="show('admin')" class="fa fa-user-shield"></i>
 </div>
 
-<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getDatabase, ref, set, get, update, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getDatabase } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-/* ================= FIREBASE CONFIG ================= */
+/* FIREBASE CONFIG */
 const firebaseConfig = {
-  apiKey: "YOUR_KEY",
-  authDomain: "YOUR_DOMAIN",
-  databaseURL: "YOUR_DB",
-  projectId: "YOUR_ID",
-  appId: "YOUR_APP"
+apiKey:"YOUR_KEY",
+authDomain:"YOUR_DOMAIN",
+databaseURL:"YOUR_DB",
+projectId:"YOUR_ID"
 };
 
-let mockMode = firebaseConfig.apiKey === "YOUR_KEY";
+let mock = firebaseConfig.apiKey === "YOUR_KEY";
 
 /* INIT */
-const app = !mockMode ? initializeApp(firebaseConfig) : null;
-const auth = !mockMode ? getAuth(app) : null;
-const db = !mockMode ? getDatabase(app) : null;
+const app = !mock ? initializeApp(firebaseConfig) : null;
+const auth = !mock ? getAuth(app) : null;
+const db = !mock ? getDatabase(app) : null;
 
 /* MOCK DATA */
-let user = {
-  uid:"123",
-  name:"Piyush",
-  balance:1200,
-  upi:""
-};
-
-let tasks = [
-{title:"Join Channel @PayQuest", reward:10},
-{title:"Watch Ad", reward:5}
+let courses=[
+{title:"Java Basics",price:10,type:"course"},
+{title:"Advanced JS",price:20,type:"course"}
 ];
 
+let tests=[
+{title:"JS Test 1",price:15,type:"test"}
+];
+
+let lectures=[
+{title:"HTML Intro",price:5,type:"lecture"}
+];
+
+let cart=JSON.parse(localStorage.getItem("cart")||"[]");
+
 /* TOAST */
-function toast(msg){
+window.toast=(msg)=>{
 let t=document.getElementById("toast");
 t.innerText=msg;
 t.style.display="block";
@@ -237,60 +240,65 @@ setTimeout(()=>t.style.display="none",2000);
 }
 
 /* NAV */
-window.show=function(id){
+window.show=(id)=>{
 document.querySelectorAll(".view").forEach(v=>v.classList.add("hidden"));
 document.getElementById(id).classList.remove("hidden");
 }
 
-/* LOAD USER */
+/* CART */
+window.addToCart=(item)=>{
+cart.push(item);
+localStorage.setItem("cart",JSON.stringify(cart));
+updateCart();
+toast("Added to cart");
+}
+
+function updateCart(){
+document.getElementById("cartCount").innerText=cart.length;
+document.getElementById("cartList").innerHTML=
+cart.map((c,i)=>`
+<div class="card">${c.title} - ₹${c.price}</div>
+`).join("");
+}
+
+/* LOAD CONTENT */
 function load(){
-document.getElementById("bal").innerText=user.balance;
-document.getElementById("bal2").innerText=user.balance;
+document.getElementById("courseList").innerHTML=
+courses.map(c=>`
+<div class="card red">
+<h3>${c.title}</h3>
+<p>₹${c.price}</p>
+<button class="btn" onclick='addToCart(${JSON.stringify(c)})'>Add</button>
+</div>
+`).join("");
+
+document.getElementById("testList").innerHTML=
+tests.map(t=>`
+<div class="card yellow">
+<h3>${t.title}</h3>
+<button class="btn">Start</button>
+</div>
+`).join("");
+
+document.getElementById("lectureList").innerHTML=
+lectures.map(l=>`
+<div class="card green">
+<h3>${l.title}</h3>
+<button class="btn">Watch</button>
+</div>
+`).join("");
 }
 
-/* TASKS */
-function loadTasks(){
-let box=document.getElementById("taskList");
-box.innerHTML="";
-tasks.forEach((t,i)=>{
-box.innerHTML+=`
-<div class="card">
-<h4>${t.title}</h4>
-<p>Reward: ₹${t.reward}</p>
-<button class="btn" onclick="completeTask(${i})">Complete</button>
-</div>`;
-});
+/* CHECKOUT */
+window.checkout=()=>{
+toast("Order placed (mock)");
+cart=[];
+localStorage.removeItem("cart");
+updateCart();
 }
 
-window.completeTask=function(i){
-user.balance+=tasks[i].reward;
-toast("Reward Added!");
 load();
-}
-
-/* UPI */
-window.setUPI=function(){
-user.upi=document.getElementById("upi").value;
-toast("UPI Saved");
-}
-
-/* WITHDRAW */
-window.withdraw=function(){
-let amt=document.getElementById("amt").value;
-if(amt>user.balance){toast("Insufficient Balance");return;}
-user.balance-=amt;
-toast("Withdraw Requested");
-load();
-}
-
-/* AUTH MOCK */
-function init(){
-load();
-loadTasks();
-toast("Welcome to PayQuest");
-}
-
-init();
+updateCart();
 
 </script>
 </body>
